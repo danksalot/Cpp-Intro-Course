@@ -1,0 +1,30 @@
+COSC 2336.S70
+PROGRAM SIX
+
+ASSIGNMENT:
+
+Create a program which will read in a set of values for the cost of moving between two nodes in a graph 
+	and determine the minimum cost for connecting all nodes. 
+	The data will consist of statements in the following form.
+
+NumNodes
+Node1 Node2 Cost
+
+NumNodes will be the number of nodes in the graph (maximum of 12). 
+	Node1 and Node2 are single alphabetical characters (upper case) and Cost is a positive (> 0) integer value. 
+	There will be one statement per line. The nodes will be lettered in alphabetical order 
+		(i.e. if there are six nodes they will be A, B, C, D, E, F.  
+	The cost of moving between nodes is not symmetrical 
+		(i.e. the cost of moving from A to B may be different from the cost of moving from B to A).
+
+Note: There may not be a path connecting every node 
+	(i.e. A may connect to B and B may connect to C but there may not be a path from A to C). 
+	If there is not a statement A C Cost, it is implied that there is no connection from A to C.
+
+Output will be the cost of the minimum path through the nodes and the list of nodes visited (in the order visited). 
+	If there is no unique minimum path, you may display any of the minimum paths found. 
+	If no minimum path is found, display a message to that effect.
+
+Also note that the list is not circular (that is you do not need to return to the starting point).
+
+BONUS:	There is a 25 point bonus if you have a working non-recursive solution.
