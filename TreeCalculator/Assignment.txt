@@ -1,0 +1,33 @@
+COSC 2336.S70
+PROGRAM FOUR
+
+ASSIGNMENT:
+
+Create a program, which will read a series of numbers and operators. 
+Using those values a tree will be built representing the expression. 
+The tree will then be evaluated and deleted.
+
+STATEMENTS:
+
+Valid statements are of one of the following three forms:
+
+1) 	"C" followed by a whole number: this will cause the number 
+	(up to three digits with a possible minus sign) to be inserted into the tree as a constant.
+2) 	"V": The letter V followed by two digits will cause a variable to be placed into the tree 
+	(the digits will be which variable 00 through 99).
+3) 	"v": The letter v followed by two digits, a space, 
+	and up to three digits with possible minus sign will set the value of a variable 
+	(the set of two digits is which variable) to be set to the value (the set of up to three digits).
+4) 	"O" followed by an operator ("+", "-", "*", "/") followed by a single digit number: 
+	this will insert the operator into the tree using the following digit as the precedence of the operator 
+	(this equates to the number of parentheses enclosing the operator - the higher the value of the number, 
+	the higher the precedence of the operator).
+5) 	"E": The letter E will cause the tree to be evaluated and the resulting value printed.
+6) 	"D": The letter D will cause the tree to be deleted.
+7) 	"X": Terminate the program.
+
+For test purposes some way of printing the delete operation as it proceeds should be provided to insure that all nodes are indeed deleted.
+
+After deleting the tree, the process may begin again and will result in the creation of a new tree.
+
+DUE: 24 March 2011
