@@ -1,0 +1,160 @@
+1)	GotEVAL (Statement & S)
+	{
+	return AfterEVAL;
+	}
+
+2)	GotSemicolonAfterEVAL (Statement & S, Token &)
+	{
+	cout << S.MathTree.Evaluate () << endl;
+	return StatementComplete;
+	}
+
+
+3)	GotExp (Statement & S)
+	{
+	S.MathTree.Delete ();
+	// initialize stuff
+		Last Operator (If not in Delete ())
+		NumOpenParens = 0;		// in Statement Class
+	return StartingExpression;
+	}
+
+4)	GotOperand (Statement & S, Token & T)
+	{
+	S.MathTree.InsertOperand (T);
+	return AfterOperand;
+	}
+
+5)	InsertBinaryPlusMinus (Statement & S, Token & T)
+	{
+	T.SetPrecidence (BinaryPlusMinusPrecidence);
+	S.MathTree.InsertBinaryOperator (T);
+	return StartingExpression;
+	}
+
+6)	InsertBinaryMultiplyDivide (Statement & S, Token & T)
+	{
+	T.SetPrecidence (BinaryMultiplyDividePrecidence);
+	S.MathTree.InsertBinaryOperator (T);
+	return StartingExpression;
+	}
+
+7)	CloseParenAfterOperand (Statement & S, Token & T)
+	{
+	if (S.NumOpenParens > 0)
+			{
+			S.NumOpenParens--;
+			return StartingExpression
+			}
+		else 
+			{
+			cout << "BAD" << endl;
+			S.MathTree.Delete ();
+			return SkipToSemiColon;
+			}
+	}
+
+8)	GotNonSemicolon (Statement & S, Token & T)
+	{
+	return SkipToSemicolon;
+	}
+
+9)	GotSemicolon (Statment & S, Token & T)
+	{
+	return StatementComplete;
+	}
+
+10)	GotOpenParen (Statment & S, Token & T)
+	{
+	NumOpenParens ++;
+	return StartingExpression;
+	}
+
+11)	GotUnaryPlusMinus (Statment & S, Token & T)
+	{
+	T.SetPrecidence (UnaryPlusMinusPrecidence + (NumOpenParens * ParenPrecidence));
+	return AfterUnaryOperator;
+	}
+
+12)	GotSemicolonAfterExpression (Statment & S, Token & T)
+	{
+	if (NumOpenParens == 0)
+	
+30) GotValue (Statement & S, Token & T)
+	{
+	return AfterValue;
+	}
+	
+31) GotVariableAfterValue (Statment & S, Token & T)
+	{
+	S.SetWhich (T.GetWhich ());
+	return AfterValueVariable;
+	}
+
+32) GotConstantAfterValueVariable (Statment & S, Token & T)
+	{
+	T::VariableArray [S.GetWhich ()].Value = T.GetValue ();
+	T::VariableArray [S.GetWhich ()].Defined = true;
+	}
+
+33) Need To Write
+
+34) GotMinusAftervalueVariable (Statment & S, Token & T)
+	{
+	return AfterValueVariableMinus;
+	}
+
+35) GotConstAfterValueVarMinus (Statment & S, Token & T)
+	{
+	T::VariableArray [S.GetWhich ()].Value = -(T.GetValue ());
+	T::VariableArray [S.GetWhich ()].Defined = true;
+	return AfterValueVariableConst;
+	}
+
+36) 
+
+
+
+														NotDone,							// 0
+														GotBadStatement,					// 1
+														GotEVAL,							// 2
+														GotSemicolonAfterEVAL,				// 3
+														GotEXP,								// 4
+														GotOperand,							// 5
+														InsertBinaryPlusMinus,				// 6
+														InsertBinaryMultiplyDivide,			// 7
+														CloseParenAfterOperand,				// 8
+														GotNonSemicolon,					// 9
+														SkippedToSemicolon,					// 10
+														GotOpenParen,						// 11
+														GotUnaryPlusMinus,					// 12
+														GotSemicolonAfterExpression,		// 13
+														GotVALUE,							// 14
+														GotVALUEVariable,					// 15
+														GotVALUEVariableConstant,			// 16
+														GotVALUEVariableConstantSemicolon,	// 17
+														GotVALUEVariableMinus,				// 18
+														GotVALUEVariableMinusConstant,		// 19
+														GotSpace,							// 20
+														GotEOF								// 21
+
+
+											
+											
+											
+											
+											
+											KeywordEvalToken,
+											KeywordExpToken,
+											KeywordValueToken,
+											ConstantToken,
+											VariableToken,											
+											SymbolOpenParenToken,
+											SymbolCloseParenToken,											
+											OperatorPlusToken,
+											OperatorMinusToken,
+											OperatorAsteriskToken,
+											OperatorSlashToken,
+											SymbolSemiColonToken,
+											EndOfInputToken,
+											UnknownToken
