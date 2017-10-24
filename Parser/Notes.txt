@@ -1,0 +1,122 @@
+Func 0
+TokenState NotYetDone (Token &)
+{
+cout << "This function hasn't been written yet" << endl;
+exit (0);
+}
+
+Func 1
+TokenState GotE (Token &)
+{
+return AfterE;
+}
+
+Func 2
+TokenState GotEV (Token &)
+{
+return AfterEV;
+}
+
+Func 3
+TokenState GotEVA (Token &)
+{
+return AfterEVA;
+}
+
+Func 4
+TokenState GotEVAL (Token &)
+{
+T.SetType (Keyword EVAL);
+return TokenComplete;
+}
+
+Func 5
+TokenState BadToken (Token &)
+{
+T.SetType (Unknown Token);
+cout << "Bad Input" << endl;
+return TokenComplete;
+}
+
+Func 6
+TokenState GotEX (Token &)
+{
+return AfterEX;
+}
+
+Func 7
+TokenState GotEXP (Token &)
+{
+T.SetType (Keyword EXP);
+return TokenComplete;
+}
+
+Func 8
+TokenState GotEX
+
+Func 9
+TokenState Got+ (Token &)
+{
+T.SetType (OperatorPlus);
+T.SetPrecedence (BinaryPlusMinus);
+return TokenComplete;
+}
+
+Func 11
+TokenState GotV0 (Token &)
+{
+return AfterV0;
+}
+
+Func 21
+TokenState GotV00 (Token &)
+{
+T.SetType (VariableToken);
+T.SetWhich (0);
+retur TokenComplete;
+}
+
+Func 21
+TokenState GotV01 (Token &)
+{
+T.SetType (VariableToken);
+T.SetWhich (1);
+retur TokenComplete;
+}
+
+
+Func11
+TokenState GotVDigit (Token &)
+{
+T.SetWhich ((LastChar - '0') * 10);
+return AfterVDigit;
+}
+
+Func 12
+TokenState GotVDigitDigit (Token &)
+{
+T.SetType (VariableToken);
+T.Setwhich ((T.GotWhich () + (LastChar - '0'));
+return TokenComplete
+
+Func 13
+TokenState GotDigit (Token &)
+{
+T.SetType (ConstantToken);
+T.SetValue (LastChar - '0');
+return AfterDigit;
+}
+
+Func 14
+TokenState GotAnotherDigit (Token &)
+{
+T.SetValue ((T.GetValue () * 10) + (LastChar - '0'));
+return AfterDigit;
+}
+
+Func 15
+TokenState GotNonDigit (Token &)
+{
+PutBackChar ();
+return TokenComplete;
+}
