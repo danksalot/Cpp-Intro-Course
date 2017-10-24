@@ -1,0 +1,12 @@
+Create a program, which will perform the following actions:
+
+1.	Create a queue derived from the UBArray used in Program One.
+	a)	Each data element of each node will consist of a string object either from the STL (Standard Template Library) 
+		or from the String definition in the 2336 directory.
+2.	Two functions must be created:
+	a)	Queue - to place a new node on the tail of the list.
+	b)	DeQueue - to remove a node from the head of the list.
+3.	Your test program should accept three commands to be given from the keyboard:
+	a)	Q string - where string is replaced by a string typed on the keyboard. This command will cause the typed string to be queued to the list.
+	b)	D - This command will cause the head string to be removed from the list and printed.
+	c)	X - Terminates the program.
