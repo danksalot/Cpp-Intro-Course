@@ -5,6 +5,7 @@ using namespace std;
  
 #include "RAFile.h"
  
+//CONSTRUCTORS AND DECONSTRUCTOR
 RAFile::RAFile (): NumRecords (0)
     {
     }
@@ -22,10 +23,26 @@ RAFile::RAFile (const WCS_String & Str)
 RAFile::~RAFile ()
     {
     Close ();
+    cout << "Database has been updated and Stored" << endl;
     }
  
+//FILE METHODS
 void RAFile::Close ()
     {
+    MyFile.seekp (0);
+    MyFile.write (reinterpret_cast <char *> (&NumRecords), sizeof (NumRecords));
+    MyFile.seekp (EndOfData);
+ 
+ 
+    for (ULong i = 0; i < NumRecords; i++)
+        {
+        MyFile.write (reinterpret_cast <char *> (&RecordInfo [i]), sizeof (RecordInfo [i]));
+        }
+    }
+ 
+RAFile::ULong   RAFile::Size ()
+    {
+    return NumRecords;
     }
  
 RAFile::ReturnCode RAFile::Open (const WCS_String & Str)
@@ -43,68 +60,115 @@ RAFile::ReturnCode RAFile::Open (const WCS_String & Str)
                             return FileCannotBeOpened;
                         else
                             {
-                            ULong Zero (0);
-                            MyFile.write ((const char *) & Zero, sizeof (ULong));
+                            ULong   Zero (0);
+                            MyFile.write (reinterpret_cast <char *> (&Zero), sizeof (Zero));
                             MyFile.close ();
                             MyFile.open ((const char *) Str, ios_base::in | ios_base::out | ios_base::ate | ios_base::binary);
                             }
                     }
-            if (MyFile.tellg () > sizeof (ULong))  //make sure it has num of records data
-                {
-                MyFile.seekg (0);  // go to beginning
-                MyFile.read ((char *) &NumRecords, sizeof (NumRecords));  //read num of records
-                MyFile.seekg (- static_cast <long> (NumRecords * (sizeof (RecInfo))), ios_base::end);  //go to end and back up to the beginning of record info
-                EndOfData = MyFile.tellg ();
-                if (MyFile.tellg () > sizeof (ULong))
-                        {
-                        for (ULong i = 0; i < NumRecords; i++)
-                            MyFile.read (reinterpret_cast <char *> (&RecordInfo [i]), sizeof (RecInfo));
-                        }
-                    else
-                        {
-                        MyFile.close ();
-                        return BadFileFormat;
-                        }
-                    }
-            }
-    }
- 
-RAFile::ReturnCode RAFile::Replace (ULong I, const WCS_String & S)
-    {
-    if (MyFile.is_open ())
-            {
-            if (I < NumRecords)  //replace an existing record
+            if (MyFile.tellg () >= sizeof (ULong))
                     {
-                    if (RecordInfo [I].Length () <= S.Length ())
+                    MyFile.seekg (0);
+                    MyFile.read (reinterpret_cast <char *> (&NumRecords), sizeof (NumRecords));
+                    MyFile.seekg (- static_cast <long> (NumRecords * (sizeof (RecInfo))), ios_base::end);
+                    EndOfData = MyFile.tellg ();
+                    if (MyFile.tellg () >= sizeof (ULong))
                             {
-                            MyFile.seekp (RecordInfo [I].Offset);
-                            MyFile.write ((const char *) S, S.Length ());
-                            RecordInfo [I].Length = S.Length ();
+                            for (ULong i = 0; i < NumRecords; i++)
+                                MyFile.read (reinterpret_cast <char *> (&RecordInfo [i]), sizeof (RecInfo));
                             }
                         else
                             {
-                            MyFile.seekp (EndOfData);
-                            RecordInfo [I].Offset = EndOfData;
-                            RecordInfo [I].Length = S.Length ();
-                            MyFile.write ((const char *) S, S.Length ());
-                            EndOfData = MyFile.tellp ();
+                            MyFile.close ();
+                            return BadFileFormat;
                             }
                     }
                 else
                     {
-                    for (ULong i = NumRecords; i < I; i++)
+                    MyFile.close ();
+                    return BadFileFormat;
+                    }
+            }
+    return OK;
+    }
+ 
+//DATA METHODS
+RAFile::ReturnCode RAFile::Display (ULong Index)
+    {
+    char temp [81];
+    if (!MyFile.is_open ())
+            return FileNotOpen;
+        else
+            if (Index >= NumRecords)
+                    return IndexNotFound;
+                else
+                    {
+                    MyFile.seekg (RecordInfo [Index].Offset);
+                    MyFile.read (temp, RecordInfo [Index].Length);
+                    temp [RecordInfo [Index].Length] = '\0';
+                    cout << temp << endl;
+                    return OK;
+                    }
+    }
+ 
+RAFile::ReturnCode RAFile::SeeAll ()
+    {
+    if (!MyFile.is_open ())
+            return FileNotOpen;
+        else
+            if (NumRecords == 0)
+                    return FileEmpty;
+                else
+                    {
+                    cout << endl;
+                    for (int i = 0; i < NumRecords; i++)
+                        {
+                        cout << "Record " << i << ") ";
+                        Display (i);
+                        }
+                    cout << endl;
+                    }
+    }
+ 
+ 
+RAFile::ReturnCode RAFile::Replace (ULong Index, const WCS_String & S)
+    {
+    if (MyFile.is_open ())
+            {
+            if (Index < NumRecords)  //replace an existing record
+                    {
+                    if (RecordInfo [Index].Length <= S.Length ())
+                            {
+                            MyFile.seekp (RecordInfo [Index].Offset);
+                            MyFile.write ((const char *) S, S.Length ());
+                            RecordInfo [Index].Length = S.Length ();
+                            return OK;
+                            }
+                        else
+                            {
+                            MyFile.seekp (EndOfData);
+                            RecordInfo [Index].Offset = EndOfData;
+                            RecordInfo [Index].Length = S.Length ();
+                            MyFile.write ((const char *) S, S.Length ());
+                            EndOfData = MyFile.tellp ();
+                            return OK;
+                            }
+                    }
+                else   // create a new record
+                    {
+                    for (ULong i = NumRecords; i < Index; i++)
                         {
                         RecordInfo [i].Length = 0;
                         RecordInfo [i].Offset = 0;
                         }
                     MyFile.seekp (EndOfData);
-                    RecordInfo [I].Offset = EndOfData;
-                    RecordInfo [I].Length = S.Length ();
+                    RecordInfo [Index].Offset = EndOfData;
+                    RecordInfo [Index].Length = S.Length ();
                     MyFile.write ((const char *) S, S.Length ());
                     EndOfData += S.Length ();
-                    NumRecords = I + 1;
+                    NumRecords = Index + 1;
+                    return OK;
                     }
- 
             }
         else
             return FileNotOpen;
@@ -114,20 +178,63 @@ RAFile::ReturnCode RAFile::Read (ULong I, WCS_String & S)
     {
     if (MyFile.is_open ())
             {
-            if (I < NumRecords)  //check if index exists
+            if (I < NumRecords)
+                    if (RecordInfo [I].Length > 0)
+                            {
+                            char * pChar = new char [RecordInfo [I].Length + 1];
+                            MyFile.seekg (RecordInfo [I].Offset);
+                            MyFile.read (pChar, RecordInfo [I].Length);
+                            pChar [RecordInfo [I].Length] = '\0';
+                            S = pChar;
+                            delete [] pChar;
+                            return OK;
+                            }
+                        else
+                            {
+                            S = "";
+                            return OK;
+                            }
+                else
+                    return IndexNotFound;
+            }
+            else
+                return FileNotOpen;
+    }
+ 
+RAFile::ReturnCode RAFile::Insert (ULong Index, const WCS_String & S)
+    {
+    if (MyFile.is_open ())
+        {
+        if (Index < NumRecords) // insert where current record is
                 {
-                if (RecordInfo [I] > 0)
-                        {
-                        char * pChar = new char [RecordInfo [I].Length + 1];
-                        MyFile.seekg (RecordInfo [I].Offset);
-                        MyFile.read (pChar, RecordInfo [I].Length);
-                        pChar [RecordInfo [I].Length] = '/0';
-                        S = pChar;
-                        delete [] pChar;
-                        }
-                    else
-                        S = "";
-                 
+                for (int i = NumRecords + 1; i > Index; i--)
+                    {
+                    RecordInfo [i].Offset = RecordInfo [i - 1].Offset;
+                    RecordInfo [i].Length = RecordInfo [i - 1].Length;
+                    }
+                MyFile.seekp (EndOfData);
+                RecordInfo [Index].Offset = EndOfData;
+                RecordInfo [Index].Length = S.Length ();
+                MyFile.write ((const char *) S, S.Length ());
+                EndOfData = MyFile.tellp ();
+                NumRecords++;
+                return OK;
+                }
+            else   // create a new record
+                {
+                for (ULong i = NumRecords; i < Index; i++)
+                    {
+                    RecordInfo [i].Length = 0;
+                    RecordInfo [i].Offset = 0;
+                    }
+                MyFile.seekp (EndOfData);
+                RecordInfo [Index].Offset = EndOfData;
+                RecordInfo [Index].Length = S.Length ();
+                MyFile.write ((const char *) S, S.Length ());
+                EndOfData += S.Length ();
+                NumRecords = Index + 1;
+                return OK;
+                }
             }
         else
             return FileNotOpen;
