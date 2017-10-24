@@ -1,0 +1,39 @@
+COSC 2336.S70
+PROGRAM FIVE
+
+ASSIGNMENT:
+
+Create a program that will read tokens written to match the following syntax and print the type and value of each token found. 
+The statements will be found in a file that will be passed to the program via a command line argument.
+
+
+STATEMENTS:
+
+Valid tokens are of one of the following:
+
+1)	EVAL
+2)	VALUE
+3)	EXP
+4)	Variable
+	a)	A variable is of the form Vnn where nn ranges from 00 to 99
+5)	Constant
+	a)	A constant is a number of up to 5 decimal digits from 0 to 99999
+6)	Operator
+	a)	An operator is one of the following:
+		i)		+
+		ii)		
+		iii)	*
+		iv)		/
+7)	Symbol
+	a)	A symbol is one of the following:
+		i)		(
+		ii)		)
+		iii)	;
+
+TURN IN:
+1)	A printed listing of all of the .cpp and header files that you created.
+2)	A copy of the files in the project folder as created by Visual Studio and a copy of the .exe file from the debug folder. 
+	These may be zipped placed on a 3 ½ inch floppy, a CD, 
+	or emailed to the instructor with the subject line COSC 2336.S01  Lab 5.
+
+DUE: 14 April 2011
