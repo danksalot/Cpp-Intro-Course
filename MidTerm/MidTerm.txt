@@ -1,0 +1,90 @@
+Jacob Danks
+Midterm
+
+
+1)	Describe what a stack is and how it works.
+		A Stack is a Data Structure that works like a stack of papers.  When you add a piece of paper to a stack, you put it on top.  If you want to take a piece of paper, you take the one on top.  The Stack Data Structure works in the same way - the last object added is the first to be removed.  This is also called a FILO or First In, Last Out way of organizing information.
+		
+2)	Describe what a queue is and how it works.
+		A Queue is an example of a FIFO or First In, First Out Data Structure.  The objects that are added to a queue are kept in order and removed in the same order.  A queue typically has a "head" and a "tail" as the nodes on each end and the rest in between is set up like a linked list.
+		
+3)	Describe the differences between a doubly linked list 
+	and a singly linked list and tell which you would prefer (and why) 
+	for creating a stack and for creating a queue.	
+		A singly linked list is a list of objects created by pointers in each node that point to the next one.  A doubly linked list also includes, in each node, a pointer to the previous one.  In a stack, a singly linked list is all that is needed because as you move through the stack, you are always moving from the top down.  Maintaining the stack of papers analogy, it does no good to have a pointer to the previous page when the previous page is gone by the time you can see the pointer.  It also keeps the way you work with, and think about the stack consistent with the structure you've created.  With a queue, it makes sence to use a doubly linked list.  Finding out which object is next in line works best from the "head" of the list, and finding out what were the last five objects put into the queue obviously makes more sence from the "tail".  Having pointers to both the NEXT and PREVIOUS nodes is a simple way for these methods to work.
+		
+4)	What is an iterator mechanism and why is it used?
+		While in a Data Structure, iterators can be used to move back and forth between objects or "nodes".  This allows you to have a pointer to your "current" node to access information, then change to another node and do the same.  Common iterators are methods like Next, Previous, Up, Down, Left, and Right.
+		
+5)	Explain the use of the keyword explicit in C++.
+		If a function uses a class object as a parameter, but when it's called the parameter passed is not a class object, the class constructors will be used to create a class object to pass if possible.  This is called a "converting constructor".  The keyword "explicit" is used to keep a constructor from being used this way.  Here's a simple example where the constructor will be used to convert the passed int to a class object:
+		
+		struct Example
+		{
+		Example	(int);
+		Data	D;
+		}
+		
+		void func1 (Example E)
+		{
+		cout << E.Data << endl;
+		}
+		
+		void main ()
+		{
+		func1 (574);
+		}
+		
+		To avoid this, use the keyword "explicit" like this:
+		
+		struct Example
+		{
+		explicit Example	(int);
+		Data				D;
+		}
+		
+		Now the func1 call in main will not compile, and keeps unneccessary instances of Example from being created.  This is less confusing and saves resources from being unintentionally used.
+		
+6)	What is the difference between using the C style cast and using static_cast in C++?
+		A static_cast is usually preferred over a C style cast because It is not only more restrictive, but more descriptive of the exact type of cast you are doing as well.  The static_cast is restricted from casting between pointer and non-pointer types, and also from casting from a const to non-const.  These restrictions make the static_cast safer, and the syntax makes it more noticeable.
+		
+7)	Why declare the destructor of a class as virtual?
+		The first part of a class object that is derived from a Parent class is the parent class information.  Because of that, unless the destructor is virtual, the destructor will take care of deleting all neccessary items in the Parent portion of the object and be unaware that there may be more deleting needed.  By declaring the destructor "virtual" it tells the parent destructor that the derived destructor also needs to be called.
+		
+8)	What is an overloaded cast operator, what are the rules for its declaration, and why have one?
+		An overloaded cast operator allows you to cast your class in an intentional way to any other data type.  Consider the following example:
+		
+		class EasterBasket
+		{
+		public:
+		EasterBasket (int);
+		operator int ();
+		GetNumEggs ();
+		private:
+		int NumEggs;
+		}
+		
+		EasterBasket (int I)
+		{
+		NumEggs = I;
+		}
+
+		GetNumEggs ()
+		{
+		return NumEggs;
+		}
+		
+		operator int ()
+		{
+		return NumEggs;
+		}
+		
+		void main ()
+		{
+		EasterBasket EB (7);
+		int MyEggs = EB;
+		int YourEggs = EB.GetNumEggs ();
+		cout << Eggs << endl;
+		}
+		
+		In the above example the assignment of MyEggs is much more simple than the assignment of YourEggs and is made possible by overloading the int cast operator.  The compiler sees that it needs an int, and it does not have one, so it looks for the overloaded cast operator to see if it can make an int out of what it has.  When declaring the overloaded cast operator, a return type is not needed as the compiler assumes you will return the type you are casting to.  This works with casting to other classes as well as built-in data types.
