@@ -1,0 +1,41 @@
+#include <fstream>
+#include <iostream>
+ 
+using namespace std;
+ 
+void main ()
+    {
+    fstream     MyFile;     // there is a constructor which has the arguments as open
+                            //fstream   MyFile.open;
+    MyFile.open ("Name", ios_base::out | ios_base::in);
+            //ios_base::in      file MUST exist
+            //ios_base::out     if done without ios_base::in
+            //                          will create file if it doesn't exist already
+            //                          if file exists, it will be truncated to 0 length
+            //                  if done in combination with ios_base::in
+            //                          file must exist
+            //ios_base::ate     you are positioned "AT THE END" of the file with it opens
+            //                          you are allowed to back up and write over it if opened for output
+            //ios_base::app     you are positioned at the end of the file when it opens
+            //                          if opened for output, all output will automatically be at the end of the file
+            //                          even if you backed up toward the beginning of the file
+            //ios_base::trunc   truncate (destroy) the file
+            //ios_base::binary  open file in binary mode, text mode if the default
+    MyFile.is_open ();      // will return true if the file is open, or false if not
+    MyFile.close ();        //closes the file and flushed the buffer
+    MyFile.flush ();        // forces the buffer to be written to disk
+    MyFile << endl;           //outputs a new line and flushes the buffer
+    MyFile.seekp (384);     //one parameter puts curser # of bytes from beginning for output
+                            //go to record 384 and input data     (seekp(345, ios_base::end  or ::beg  or ::cur)
+                            //seekp - "put" for output          seekg - "get" for input
+    MyFile.tellp ();        //returns current output position in the file, measured from the beginning
+    MyFile.tellg ();        //returns current input position in the file, measured from the beginning
+    MyFile.write (char * pChar, size_t NumBytes);       //unformatted write to the file, pChar is the address
+                                                        //of the data, NumBytes is the size
+    MyFile.read (char * pChar, size_t NumBytes);        //unformatted read from file
+    MyFile.good ();         //returns true if last I/O operation worked
+    MyFile.eof ();          //returns true if input operation failed because it ran into the end of file
+    MyFile.fail ();         //returns true if last I/O operation failed but other I/O operation might work or if you try again
+    MyFile.bad ();          //returns true if last I/O operation failed and all operations are now going to fail
+    MyFile.clear ();        //eof, bad, or fail must be cleared for any I/O operation to work
+    }
